@@ -1,31 +1,19 @@
 
 public class Monitor {
-	/*
-	 * ------------    
-	 * Data members 
-	 * ------------
-	 */
 
+	public int chopStickCount;
 
-	/**
-	 * Constructor
-	 */
-	public Monitor(int piNumberOfPhilosophers) {
+	public Monitor(int numberOfPhilosophers) {
 		// TODO: set appropriate number of chopsticks based on the # of philosophers
+		chopStickCount = numberOfPhilosophers;
 	}
-
-	/*
-	 * -------------------------------
-	 * User-defined monitor procedures
-	 * -------------------------------
-	 */
 
 	/**
 	 * Grants request (returns) to eat when both chopsticks/forks are available.
 	 * Else forces the philosopher to wait()
 	 */
 	public synchronized void pickUp(final int piTID) {
-		// ...
+
 	}
 
 	/**
@@ -52,5 +40,3 @@ public class Monitor {
 		// ...
 	}
 }
-
-// EOF
