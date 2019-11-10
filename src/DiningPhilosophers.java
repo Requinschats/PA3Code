@@ -1,4 +1,4 @@
-class DiningPhilosophers {
+public class DiningPhilosophers {
 	public static final int DEFAULT_NUMBER_OF_PHILOSOPHERS = 4;
 	public static final int DINING_STEPS = 10;
 	public static Monitor soMonitor = null;

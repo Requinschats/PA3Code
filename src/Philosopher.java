@@ -38,7 +38,11 @@ public class Philosopher extends BaseThread {
 
 	public void run() {
 		for(int i = 0; i < DiningPhilosophers.DINING_STEPS; i++) {
-			DiningPhilosophers.soMonitor.pickUp(getTID());
+			try {
+				DiningPhilosophers.soMonitor.pickUp(getTID());
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			eat();
 			DiningPhilosophers.soMonitor.putDown(getTID());
 			think();
@@ -47,8 +51,7 @@ public class Philosopher extends BaseThread {
 			 * A decision is made at random whether this particular
 			 * philosopher is about to say something terribly useful.
 			 */
-			if(true)//..) // A random decison
-			{
+			if(Math.random() < 0.5) {
 				// Some monitor ops down here...
 				talk();
 				// ...
@@ -58,7 +61,7 @@ public class Philosopher extends BaseThread {
 		}
 	}
 
-	public void saySomething() {
+	private void saySomething() {
 		String[] astrPhrases = {
 			"Eh, it's not easy to be a philosopher: eat, think, talk, eat...",
 			"You know, true is false and false is true if you think of it",
