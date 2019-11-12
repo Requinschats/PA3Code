@@ -39,25 +39,22 @@ public class Philosopher extends BaseThread {
 	public void run() {
 		for(int i = 0; i < DiningPhilosophers.DINING_STEPS; i++) {
 			try {
-				DiningPhilosophers.soMonitor.pickUp(getTID());
+				DiningPhilosophers.monitor.pickUp(getTID());
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 			eat();
-			DiningPhilosophers.soMonitor.putDown(getTID());
+			DiningPhilosophers.monitor.putDown(getTID());
 			think();
-			/*
-			 * TODO:
-			 * A decision is made at random whether this particular
-			 * philosopher is about to say something terribly useful.
-			 */
 			if(Math.random() < 0.5) {
-				// Some monitor ops down here...
+				try {
+					DiningPhilosophers.monitor.requestTalk();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 				talk();
-				// ...
+				DiningPhilosophers.monitor.endTalk();
 			}
-
-
 		}
 	}
 

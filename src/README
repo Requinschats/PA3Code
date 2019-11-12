@@ -1,0 +1,8 @@
+# Question 4: # 
+Starvation is handled mostly in isAPhilosphereStarving() monitor private method. 
+Every time a philosopher tries to pickup his two sticks, the previous method is called. 
+First, it calculates the average of a monitor attribute integer array called philosopherEatCount.
+This array is incremented at the philosopher thread id index every time a philosopher finished eating.
+Second, the method determines if a eat is considerably smaller than the others (therefore starving).
+Look at the method for details. 
+In pickUp() method, if a philosopher is starving, all other philosopher threads are put on wait() in a while loop and starving threads gets indirectly the first priority to pick its two sticks 

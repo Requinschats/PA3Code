@@ -1,12 +1,12 @@
 public class DiningPhilosophers {
 	public static final int DEFAULT_NUMBER_OF_PHILOSOPHERS = 4;
-	public static final int DINING_STEPS = 10;
-	public static Monitor soMonitor = null;
+	public static final int DINING_STEPS = 5;
+	public static Monitor monitor = null;
 
 	public static void main(String[] argv) {
 		try {
 			// TODO: Should be settable from the command line
-			soMonitor = new Monitor(DEFAULT_NUMBER_OF_PHILOSOPHERS);
+			monitor = new Monitor(DEFAULT_NUMBER_OF_PHILOSOPHERS);
 			Philosopher philosophers[] = new Philosopher[DEFAULT_NUMBER_OF_PHILOSOPHERS];
 
 			philosophersSitDown(philosophers);
