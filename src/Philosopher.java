@@ -39,7 +39,7 @@ public class Philosopher extends BaseThread {
 	public void run() {
 		for(int i = 0; i < DiningPhilosophers.DINING_STEPS; i++) {
 			try {
-				DiningPhilosophers.monitor.pickUp(getTID());
+				DiningPhilosophers.monitor.pickUp(getTID(), i);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

@@ -1,11 +1,11 @@
 import java.util.Arrays;
-import java.util.Collections;
 
 public class Monitor {
 
     public boolean[] chopSticks;
     public boolean silence;
     public int[] philosopherEatCount;
+
 
     public Monitor(int numberOfPhilosophers) {
         chopSticks = new boolean[numberOfPhilosophers];
@@ -20,12 +20,12 @@ public class Monitor {
         silence = true;
     }
 
-    public synchronized void pickUp(final int philosopherId) throws InterruptedException {
-        if (isAPhilosphereStarving()) {
+    public synchronized void pickUp(final int philosopherId, final int eatRound) throws InterruptedException {
+        if (starvingPhilosphersIds().length > 0) {
             System.out.println(Arrays.toString(philosopherEatCount));
-            System.out.println("Somebody is STARVING");
-               if(philosopherId != getStarvingPhilosopherId()){
-                   while(isAPhilosphereStarving()) { //no one can request pickup while a philosopher is starving
+            System.out.println("Somebody(s) is/are STARVING");
+               if(philosopherEatCount[philosopherId-1]){
+                   while(starvingPhilosphersIds().length > 0) { //no one can request pickup while a philosopher is starving
                        wait();
                        System.out.println(philosopherId + " is waiting for " + getStarvingPhilosopherId() + "to eat");
                    }
@@ -71,10 +71,13 @@ public class Monitor {
         notify();
     }
 
-    private boolean isAPhilosphereStarving() {
+    private int[] starvingPhilosphersIds() {
        long average = Math.round(Arrays.stream(philosopherEatCount).average().getAsDouble());
-       System.out.println(Arrays.toString(philosopherEatCount));
-       return !(average == 0) && !(average < 2) && Arrays.stream(philosopherEatCount).anyMatch(count -> (count+1) < average);
+       if(!(average == 0) && !(average < 2) && Arrays.stream(philosopherEatCount).findFirst(count -> (count+1) < average)){
+           return Arrays.stream(philosopherEatCount).filter(count -> (count+1) < average).toArray();
+       } else {
+           return new int[0];
+       }
     }
 
     private int getStarvingPhilosopherId(){
