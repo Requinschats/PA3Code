@@ -3,8 +3,6 @@ import java.util.Collections;
 
 public class Monitor {
 
-    //TODO: protect against starvation
-
     public boolean[] chopSticks;
     public boolean silence;
     public int[] philosopherEatCount;
@@ -24,10 +22,14 @@ public class Monitor {
 
     public synchronized void pickUp(final int philosopherId) throws InterruptedException {
         if (isAPhilosphereStarving()) {
+            System.out.println(Arrays.toString(philosopherEatCount));
+            System.out.println("Somebody is STARVING");
                if(philosopherId != getStarvingPhilosopherId()){
-                   while(isAPhilosphereStarving()) {
+                   while(isAPhilosphereStarving()) { //no one can request pickup while a philosopher is starving
                        wait();
+                       System.out.println(philosopherId + " is waiting for " + getStarvingPhilosopherId() + "to eat");
                    }
+                   System.out.println("nobody is starving anymore");
                }
                pickupChopSticksFromTable(philosopherId);
         } else {
@@ -70,13 +72,28 @@ public class Monitor {
     }
 
     private boolean isAPhilosphereStarving() {
-       double average = (Arrays.stream(philosopherEatCount).average().getAsDouble());
-       int philosopherCount = philosopherEatCount.length;
-       return !(average == 0) && !(average < 2 * philosopherCount) && Arrays.stream(philosopherEatCount).anyMatch(count -> count < 2 * average);
+       long average = Math.round(Arrays.stream(philosopherEatCount).average().getAsDouble());
+       System.out.println(Arrays.toString(philosopherEatCount));
+       return !(average == 0) && !(average < 2) && Arrays.stream(philosopherEatCount).anyMatch(count -> (count+1) < average);
     }
 
     private int getStarvingPhilosopherId(){
-        return Arrays.asList(philosopherEatCount).indexOf(Arrays.stream(philosopherEatCount).max().getAsInt())+1;
+        for(int i=0; i<philosopherEatCount.length;i++){
+            if(philosopherEatCount[i] == min(philosopherEatCount)){
+                return i+1;
+            }
+        }
+        return -1;
+    }
+
+    public int min(int [] array) {
+        int min = array[0];
+        for(int i=0; i<array.length; i++ ) {
+            if(array[i]<min) {
+                min = array[i];
+            }
+        }
+        return min;
     }
 
     private void pickupChopSticksFromTable(int philosopherId) throws InterruptedException {
