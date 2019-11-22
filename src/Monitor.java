@@ -20,20 +20,23 @@ public class Monitor {
         silence = true;
     }
 
-    public synchronized void pickUp(final int philosopherId, final int eatRound) throws InterruptedException {
-        if (starvingPhilosphersIds().length > 0) {
+    public synchronized void pickUp(final int philosopherId) throws InterruptedException {
+        System.out.println(Arrays.toString(philosopherEatCount));
+        if (starvingPhilosphers().length > 0) {
             System.out.println(Arrays.toString(philosopherEatCount));
-            System.out.println("Somebody(s) is/are STARVING");
-               if(philosopherEatCount[philosopherId-1]){
-                   while(starvingPhilosphersIds().length > 0) { //no one can request pickup while a philosopher is starving
+            System.out.println("Somebody(s) is/are STARVING" + Arrays.toString(starvingPhilosphers()));
+               if(Arrays.stream(starvingPhilosphers()).noneMatch(philosopher -> philosopher == philosopherEatCount[philosopherId-1])){
+                   while(starvingPhilosphers().length > 0) { //no one can request pickup while a philosopher is starving
+                       System.out.println(philosopherId + " is waiting for " + Arrays.toString(starvingPhilosphers()) + "to eat");
                        wait();
-                       System.out.println(philosopherId + " is waiting for " + getStarvingPhilosopherId() + "to eat");
                    }
                    System.out.println("nobody is starving anymore");
                }
                pickupChopSticksFromTable(philosopherId);
+               notify();
         } else {
            pickupChopSticksFromTable(philosopherId);
+           notify();
         }
     }
 
@@ -71,23 +74,15 @@ public class Monitor {
         notify();
     }
 
-    private int[] starvingPhilosphersIds() {
+    private int[] starvingPhilosphers() {
        long average = Math.round(Arrays.stream(philosopherEatCount).average().getAsDouble());
-       if(!(average == 0) && !(average < 2) && Arrays.stream(philosopherEatCount).findFirst(count -> (count+1) < average)){
+       if(!(average == 0) && !(average < 2) && Arrays.stream(philosopherEatCount).anyMatch(count -> (count+2) < average)){
            return Arrays.stream(philosopherEatCount).filter(count -> (count+1) < average).toArray();
        } else {
            return new int[0];
        }
     }
 
-    private int getStarvingPhilosopherId(){
-        for(int i=0; i<philosopherEatCount.length;i++){
-            if(philosopherEatCount[i] == min(philosopherEatCount)){
-                return i+1;
-            }
-        }
-        return -1;
-    }
 
     public int min(int [] array) {
         int min = array[0];
@@ -99,7 +94,7 @@ public class Monitor {
         return min;
     }
 
-    private void pickupChopSticksFromTable(int philosopherId) throws InterruptedException {
+    private synchronized void pickupChopSticksFromTable(int philosopherId) throws InterruptedException {
         if (philosopherId == 1) {
             while (!(chopSticks[chopSticks.length - 1] && chopSticks[0])) {
                 wait();
